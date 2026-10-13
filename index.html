@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>html{color-scheme:dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Havi's Pool Tournament</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: one centered column of frosted glass panels floating over a green-felt-to-navy field; bracket scrolls sideways inside its own glass panel. */
+:root {
+  --felt: #0b2a24;
+  --navy: #0a1226;
+  --ink: #eaf2ee;
+  --muted: #9fb3ab;
+  --gold: #e6c470;
+  --gold-ink: #1a1405;
+  --glass: rgba(255, 255, 255, 0.07);
+  --glass-strong: rgba(255, 255, 255, 0.11);
+  --glass-line: rgba(255, 255, 255, 0.16);
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  --font: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background-color: #0b1d22; /* fallback */
+  background-image: linear-gradient(160deg, var(--felt) 0%, #0b2230 55%, var(--navy) 100%);
+  background-attachment: fixed;
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+}
+/* soft colour orbs */
+body::before, body::after {
+  content: ""; position: fixed; z-index: -1; border-radius: 50%; filter: blur(70px); pointer-events: none;
+}
+body::before { width: 46vmax; height: 46vmax; top: -14vmax; left: -12vmax; background: radial-gradient(circle, rgba(46, 160, 110, 0.38), transparent 65%); }
+body::after { width: 42vmax; height: 42vmax; bottom: -14vmax; right: -12vmax; background: radial-gradient(circle, rgba(90, 110, 230, 0.32), transparent 65%); }
+
+.wrap { max-width: 1040px; margin-inline: auto; padding-inline: 16px; }
+section { padding-block: 44px; scroll-margin-top: 72px; }
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: rgba(18, 40, 44, 0.92); }
+}
+
+.label { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-weight: 800; font-size: clamp(2.2rem, 7vw, 4.2rem); line-height: 1.05; letter-spacing: -0.02em; }
+h2 { font-weight: 300; font-size: clamp(1.6rem, 4vw, 2.2rem); letter-spacing: -0.01em; }
+h2 b { font-weight: 800; }
+p { margin: 0; }
+.sec-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 22px; }
+
+/* nav */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; padding-block: 10px; }
+.nav-in {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 14px; border-radius: 999px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); white-space: nowrap; }
+.brand svg { width: 26px; height: 26px; flex: none; }
+.links { display: flex; gap: 4px; }
+.links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 600; padding: 6px 10px; border-radius: 999px; transition: color .2s, background .2s; }
+.links a:hover { color: var(--ink); background: var(--glass-strong); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: 700 0.95rem var(--font); text-decoration: none; cursor: pointer;
+  padding: 13px 24px; border-radius: 999px; border: 1px solid transparent;
+  background: var(--gold); color: var(--gold-ink);
+  transition: transform .2s, box-shadow .2s;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(230, 196, 112, 0.28); }
+.btn.ghost { background: var(--glass-strong); color: var(--ink); border-color: var(--glass-line); }
+.btn.ghost:hover { box-shadow: none; background: rgba(255, 255, 255, 0.17); }
+.btn[aria-disabled="true"] { opacity: 0.6; pointer-events: none; }
+
+/* hero */
+.hero { padding-block: 56px 28px; display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+.hero .ball { width: 64px; height: 64px; }
+.hero .tag { color: var(--gold); font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; font-size: 0.85rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { padding: 8px 14px; border-radius: 999px; font-size: 0.88rem; display: inline-flex; gap: 8px; align-items: center; }
+.chip span { color: var(--muted); }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* fact cards */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.fact { padding: 22px; display: flex; flex-direction: column; gap: 6px; transition: transform .25s; }
+.fact:hover, .info:hover { transform: translateY(-3px); }
+.fact .big { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; min-width: 0; }
+.fact .big.gold { color: var(--gold); }
+.fact small { color: var(--muted); font-size: 0.9rem; }
+.venue { margin-top: 14px; padding: 20px 22px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+.venue div { min-width: 0; }
+.venue strong { font-size: 1.1rem; display: block; }
+
+/* rules */
+.rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.rules li { padding: 18px 20px; display: flex; gap: 14px; align-items: flex-start; }
+.rules li i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); margin-top: 9px; }
+.rules li div { min-width: 0; }
+
+/* register + pay */
+.two { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+.info { padding: 26px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; transition: transform .25s; min-width: 0; }
+.info p { color: var(--muted); }
+.pay-box { width: 100%; padding: 14px 16px; border-radius: 12px; background: rgba(0, 0, 0, 0.22); border: 1px solid var(--glass-line); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pay-box b { font-size: 1.15rem; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.pay-box .btn { padding: 8px 16px; font-size: 0.82rem; }
+.embed { margin-top: 18px; padding: 8px; overflow: hidden; }
+.embed iframe { width: 100%; height: 900px; border: 0; border-radius: 12px; background: #fff; display: block; }
+
+/* bracket */
+.bracket-scroll { overflow-x: auto; padding: 22px; }
+.bracket { display: flex; gap: 22px; min-width: max-content; }
+.round { display: flex; flex-direction: column; width: 210px; gap: 10px; }
+.round h3 { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+.matches { display: flex; flex-direction: column; justify-content: space-around; flex: 1; gap: 12px; }
+.match { border-radius: 12px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--glass-line); overflow: hidden; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 12px; font-size: 0.9rem; }
+.row + .row { border-top: 1px solid var(--glass-line); }
+.row .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.row .sc { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 1.2em; text-align: right; }
+.row.tbd .nm { color: var(--muted); font-style: italic; }
+.row.win { background: rgba(230, 196, 112, 0.16); }
+.row.win .nm, .row.win .sc { color: var(--gold); font-weight: 800; }
+.row.lose { opacity: 0.5; }
+.champ { margin-top: 18px; padding: 18px 22px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; border-radius: 14px; border: 1px solid rgba(230, 196, 112, 0.5); background: rgba(230, 196, 112, 0.1); }
+.champ b { color: var(--gold); font-size: 1.2rem; }
+.hint { color: var(--muted); font-size: 0.85rem; margin-top: 12px; }
+
+footer { padding-block: 36px 56px; }
+.foot { padding: 22px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+.foot p { color: var(--muted); font-size: 0.9rem; }
+
+/* gentle load-in */
+@keyframes rise { from { opacity: 0.001; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.hero > *, .fact, .info { animation: rise .7s ease both; }
+.hero > *:nth-child(2) { animation-delay: .08s; } .hero > *:nth-child(3) { animation-delay: .16s; }
+.hero > *:nth-child(4) { animation-delay: .24s; } .hero > *:nth-child(5) { animation-delay: .32s; }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media (max-width: 560px) {
+  .links a:nth-child(n+3) { display: none; }
+  .links a { padding: 6px 8px; }
+  .brand span { display: none; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="eight" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="30" fill="#0d0f12" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+    <circle cx="32" cy="32" r="13" fill="#f4f6f5"/>
+    <text x="32" y="38.5" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-weight="800" font-size="19" fill="#0d0f12">8</text>
+  </symbol>
+</svg>
+
+<div class="wrap nav">
+  <nav class="glass nav-in" aria-label="Main">
+    <a class="brand" href="#top"><svg><use href="#eight"/></svg><span>Havi's Pool</span></a>
+    <div class="links">
+      <a href="#about">About</a><a href="#rules">Rules</a><a href="#register">Register</a><a href="#bracket">Bracket</a>
+    </div>
+  </nav>
+</div>
+
+<main class="wrap" id="top">
+  <header class="hero">
+    <svg class="ball" aria-hidden="true"><use href="#eight"/></svg>
+    <div class="tag">8-Ball Knockout</div>
+    <h1>Havi's Pool<br>Tournament</h1>
+    <div class="chips">
+      <div class="glass chip"><span>Date</span><b id="dateText">To be announced</b></div>
+      <div class="glass chip"><span>Venue</span><b>Havi's Place, Ngong 46</b></div>
+    </div>
+    <div class="cta-row">
+      <a class="btn regLink" href="#register">Register · KES 1,000</a>
+      <a class="btn ghost" href="#bracket">View bracket</a>
+    </div>
+  </header>
+
+  <section id="about">
+    <div class="sec-head"><div class="label">The essentials</div><h2>One table. <b>One winner.</b></h2></div>
+    <div class="facts">
+      <div class="glass fact"><div class="label">Entry fee</div><div class="big">KES 1,000</div><small>Paid by M-Pesa</small></div>
+      <div class="glass fact"><div class="label">Winner takes</div><div class="big gold">KES 15,000</div><small>Cash prize</small></div>
+      <div class="glass fact"><div class="label">Format</div><div class="big">Knockout</div><small>Single elimination, 16 players</small></div>
+    </div>
+    <div class="glass venue">
+      <div><div class="label">Location</div><strong>Havi's Place</strong><span style="color:var(--muted)">Ngong 46, Ngong</span></div>
+      <a class="btn ghost" href="https://www.google.com/maps/search/?api=1&query=Havi%27s+Place+Ngong+46" target="_blank" rel="noopener">Open in Maps</a>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="sec-head"><div class="label">How it plays</div><h2>The <b>rules</b></h2></div>
+    <ul class="rules">
+      <li class="glass"><i></i><div>Standard 8-ball rules apply to every match.</div></li>
+      <li class="glass"><i></i><div>Each match is a race to 3 frames.</div></li>
+      <li class="glass"><i></i><div>The player to break is decided by lag.</div></li>
+      <li class="glass"><i></i><div>Lose a match and you are out. Win four and you take the prize.</div></li>
+      <li class="glass"><i></i><div>The referee's decision is final.</div></li>
+    </ul>
+  </section>
+
+  <section id="register">
+    <div class="sec-head"><div class="label">Join in</div><h2>Register &amp; <b>pay</b></h2></div>
+    <div class="two">
+      <div class="glass info">
+        <div class="label">Step 1</div>
+        <h3>Fill in the registration form</h3>
+        <p>Add your full name and phone number. Only 16 players get a slot.</p>
+        <a class="btn regLink" id="regBtn" href="#register" target="_blank" rel="noopener">Register now</a>
+      </div>
+      <div class="glass info">
+        <div class="label">Step 2</div>
+        <h3>Pay KES 1,000 via M-Pesa</h3>
+        <p id="payNote">Payment details are sent to you after you register. Use your full name as the reference. The organiser checks each payment by hand and confirms your slot.</p>
+        <div class="pay-box" id="payBox" hidden>
+          <div><div class="label" id="payLabel">Till number</div><b id="payNum"></b></div>
+          <button class="btn ghost" id="copyBtn" type="button">Copy</button>
+        </div>
+      </div>
+    </div>
+    <div class="glass embed" id="embedWrap" hidden></div>
+  </section>
+
+  <section id="bracket">
+    <div class="sec-head"><div class="label">Draw</div><h2>Knockout <b>bracket</b></h2></div>
+    <div class="glass bracket-scroll" tabindex="0" aria-label="Knockout bracket, scrolls sideways">
+      <div class="bracket" id="bracketEl"></div>
+    </div>
+    <div id="champEl"></div>
+    <p class="hint">Players are added once registration closes. Winners move forward automatically as scores come in.</p>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="glass foot">
+    <div><b>Havi's Pool Tournament</b><p>Havi's Place, Ngong 46 · 8-Ball Knockout</p></div>
+    <div id="contactEl" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"></div>
+  </div>
+</footer>
+
+<script>
+/* ============ 1. SETTINGS: edit these ============ */
+var CONFIG = {
+  date: "",            // e.g. "Saturday 15 November 2026, 2:00 PM"  (empty shows "To be announced")
+  formLink: "",        // paste your Google Form link here
+  formEmbed: "",       // optional: Google Form embed link, ends with ?embedded=true
+  mpesaNumber: "",     // optional: Till/Paybill to show on the page
+  mpesaLabel: "Till number", // or "Paybill" / "Send to"
+  whatsapp: ""         // Kenyan number with country code, digits only, e.g. "254712345678"
+};
+
+/* ============ 2. BRACKET DATA: edit names and scores ============
+   Round of 16 has 8 matches. Fill a:, b: with player names and sa:, sb: with
+   frames won (use null before the match is played). Later rounds fill in
+   automatically from the winners. To fix a later slot by hand, type the name in it.
+   Example:  { a: "Brian", b: "Kevin", sa: 3, sb: 1 }                           */
+var N = null;
+var BRACKET = [
+  [ {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N},
+    {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N} ],
+  [ {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N} ],
+  [ {a:"",b:"",sa:N,sb:N}, {a:"",b:"",sa:N,sb:N} ],
+  [ {a:"",b:"",sa:N,sb:N} ]
+];
+var ROUND_NAMES = ["Round of 16", "Quarterfinals", "Semifinals", "Final"];
+var PRIZE = "KES 15,000";
+
+/* ============ page logic (no need to edit below) ============ */
+(function () {
+  function $(id) { return document.getElementById(id); }
+
+  // date
+  if (CONFIG.date) $("dateText").textContent = CONFIG.date;
+
+  // registration links
+  var regLinks = document.querySelectorAll(".regLink");
+  if (CONFIG.formLink) {
+    for (var i = 0; i < regLinks.length; i++) {
+      regLinks[i].href = CONFIG.formLink; regLinks[i].target = "_blank"; regLinks[i].rel = "noopener";
+    }
+  } else {
+    var rb = $("regBtn"); rb.textContent = "Registration opens soon"; rb.setAttribute("aria-disabled", "true"); rb.removeAttribute("target");
+  }
+
+  // embedded form
+  if (CONFIG.formEmbed) {
+    var fr = document.createElement("iframe");
+    fr.src = CONFIG.formEmbed; fr.title = "Registration form"; fr.loading = "lazy";
+    $("embedWrap").appendChild(fr); $("embedWrap").hidden = false;
+  }
+
+  // payment
+  if (CONFIG.mpesaNumber) {
+    $("payBox").hidden = false; $("payNum").textContent = CONFIG.mpesaNumber; $("payLabel").textContent = CONFIG.mpesaLabel;
+    $("payNote").textContent = "Use your full name as the reference, then complete the registration form. The organiser checks each payment by hand and confirms your slot.";
+  }
+  $("copyBtn").addEventListener("click", function () {
+    var btn = this, txt = CONFIG.mpesaNumber;
+    function done(ok) { btn.textContent = ok ? "Copied" : "Press and hold to copy"; setTimeout(function () { btn.textContent = "Copy"; }, 1800); }
+    try {
+      navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { sel(); });
+    } catch (e) { sel(); }
+    function sel() {
+      var r = document.createRange(); r.selectNodeContents($("payNum"));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); done(false);
+    }
+  });
+
+  // contact
+  var c = $("contactEl");
+  if (CONFIG.whatsapp) {
+    var a = document.createElement("a");
+    a.className = "btn"; a.target = "_blank"; a.rel = "noopener";
+    a.href = "https://wa.me/" + CONFIG.whatsapp.replace(/\D/g, "");
+    a.textContent = "Message on WhatsApp";
+    c.appendChild(a);
+  } else {
+    var p = document.createElement("p"); p.style.color = "var(--muted)"; p.textContent = "Contact details coming soon."; c.appendChild(p);
+  }
+
+  // bracket
+  function winnerOf(m) {
+    if (m.sa == null || m.sb == null || m.sa === m.sb) return null;
+    return m.sa > m.sb ? "a" : "b";
+  }
+  function nameOf(m) { var w = winnerOf(m); return w ? m[w] : ""; }
+  for (var r = 1; r < BRACKET.length; r++) {
+    for (var k = 0; k < BRACKET[r].length; k++) {
+      var m = BRACKET[r][k], f1 = BRACKET[r - 1][2 * k], f2 = BRACKET[r - 1][2 * k + 1];
+      if (!m.a && f1) m.a = nameOf(f1);
+      if (!m.b && f2) m.b = nameOf(f2);
+    }
+  }
+  function row(name, score, state) {
+    var d = document.createElement("div");
+    d.className = "row" + (name ? "" : " tbd") + (state ? " " + state : "");
+    var n = document.createElement("span"); n.className = "nm"; n.textContent = name || "TBD";
+    var s = document.createElement("span"); s.className = "sc"; s.textContent = score == null ? "" : score;
+    d.appendChild(n); d.appendChild(s); return d;
+  }
+  var host = $("bracketEl");
+  BRACKET.forEach(function (round, ri) {
+    var col = document.createElement("div"); col.className = "round";
+    var h = document.createElement("h3"); h.textContent = ROUND_NAMES[ri] || ("Round " + (ri + 1)); col.appendChild(h);
+    var ms = document.createElement("div"); ms.className = "matches";
+    round.forEach(function (m) {
+      var w = winnerOf(m), box = document.createElement("div"); box.className = "match";
+      box.appendChild(row(m.a, m.sa, w === "a" ? "win" : (w === "b" ? "lose" : "")));
+      box.appendChild(row(m.b, m.sb, w === "b" ? "win" : (w === "a" ? "lose" : "")));
+      ms.appendChild(box);
+    });
+    col.appendChild(ms); host.appendChild(col);
+  });
+  var fin = BRACKET[BRACKET.length - 1][0], champ = nameOf(fin);
+  if (champ) {
+    var ce = document.createElement("div"); ce.className = "champ";
+    var l = document.createElement("span"); l.className = "label"; l.textContent = "Champion";
+    var nb = document.createElement("b"); nb.textContent = champ + " takes " + PRIZE;
+    ce.appendChild(l); ce.appendChild(nb); $("champEl").appendChild(ce);
+  }
+})();
+</script>
+
+</body>
+</html>
